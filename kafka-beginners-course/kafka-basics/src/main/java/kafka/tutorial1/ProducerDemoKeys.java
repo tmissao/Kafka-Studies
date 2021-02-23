@@ -1,4 +1,4 @@
-package com.github.tmissao.kafka.tutorial1;
+package kafka.tutorial1;
 
 import org.apache.kafka.clients.producer.*;
 import org.apache.kafka.common.serialization.StringSerializer;
@@ -6,13 +6,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Properties;
+import java.util.concurrent.ExecutionException;
 
-public class ProducerDemoWithCallback {
+public class ProducerDemoKeys {
 
-    public static void main(String[] args) {
-        Logger logger = LoggerFactory.getLogger(ProducerDemoWithCallback.class);
+    public static void main(String[] args) throws ExecutionException, InterruptedException {
+        Logger logger = LoggerFactory.getLogger(ProducerDemoKeys.class.getName());
         String bootstrapServers = "127.0.0.1:9092";
-        String topic = "first_topic";
 
         // Producer Properties
         Properties properties = new Properties();
@@ -25,8 +25,14 @@ public class ProducerDemoWithCallback {
 
         for(int i = 0 ; i < 10; i++) {
 
+            String topic = "first_topic";
+            String key = "id_" + Integer.toString(i);
+            String value = "hello world " + Integer.toString(i);
+
             // Producer Record
-            ProducerRecord<String, String> record = new ProducerRecord<String, String>(topic, "hello world " + Integer.toString(i));
+            ProducerRecord<String, String> record = new ProducerRecord<String, String>(topic, key, value);
+
+            logger.info("Key: " + key);
 
             // Send Data
             producer.send(record, new Callback() {
@@ -45,7 +51,7 @@ public class ProducerDemoWithCallback {
                         logger.error("Error while producing", e);
                     }
                 }
-            });
+            }).get(); // block the .send() to make it sync
         }
         producer.flush();
         producer.close();
