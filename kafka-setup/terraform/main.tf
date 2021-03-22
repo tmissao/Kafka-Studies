@@ -7,8 +7,6 @@ module "vpc" {
   public_subnets_cidr_block  = var.public_subnets_cidr_block
   private_subnets_cidr_block = var.private_subnets_cidr_block
   tags_shared                = var.tags
-  is_eks_enabled = true
-  eks_name = var.eks_cluster_identifier
 }
 
 module "kafka" {
