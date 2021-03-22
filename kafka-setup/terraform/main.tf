@@ -1,7 +1,7 @@
 data "aws_caller_identity" "current" {}
 
 module "vpc" {
-  source                     = "./modules/kafka"
+  source                     = "./modules/vpc"
   vpc_name                   = var.project_name
   vpc_cidr_block             = var.vpc_cidr_block
   public_subnets_cidr_block  = var.public_subnets_cidr_block
