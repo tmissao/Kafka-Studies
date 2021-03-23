@@ -1,0 +1,58 @@
+#!/bin/sh
+### BEGIN INIT INFO
+# Provides:         zookeeper
+# Required-Start:    
+# Required-Stop:     
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: zookeeper
+# Description:       zookeeper
+### END INIT INFO
+#
+# zookeeper          Start/Stop zookeeper
+#
+# chkconfig: - 99 10
+# description: Standard script to start and stop zookeeper
+
+DAEMON_PATH=/kafka/bin
+DAEMON_NAME=zookeeper
+
+PATH=$PATH:$DAEMON_PATH
+
+# See how we were called.
+case "$1" in
+  start)
+        # Start daemon.
+        pid=`ps ax | grep -i 'org.apache.zookeeper' | grep -v grep | awk '{print $1}'`
+        if [ -n "$pid" ]
+          then
+            echo "Zookeeper is already running";
+        else
+          echo "Starting $DAEMON_NAME";
+          $DAEMON_PATH/zookeeper-server-start.sh -daemon /kafka/config/zookeeper.properties
+        fi
+        ;;
+  stop)
+        echo "Shutting down $DAEMON_NAME";
+        $DAEMON_PATH/zookeeper-server-stop.sh
+        ;;
+  restart)
+        $0 stop
+        sleep 2
+        $0 start
+        ;;
+  status)
+        pid=`ps ax | grep -i 'org.apache.zookeeper' | grep -v grep | awk '{print $1}'`
+        if [ -n "$pid" ]
+          then
+          echo "Zookeeper is Running as PID: $pid"
+        else
+          echo "Zookeeper is not Running"
+        fi
+        ;;
+  *)
+        echo "Usage: $0 {start|stop|restart|status}"
+        exit 1
+esac
+
+exit 0
